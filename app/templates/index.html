@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Wine4Food AI – Класификация на храна</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            flex: 1;
+            padding: 1em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #f1f1f1;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
+<main>
     <h1>Качи изображение на храна</h1>
     <form action="/" method="post" enctype="multipart/form-data">
         <input type="file" name="image">
@@ -31,24 +54,24 @@
             <button type="submit">Качи нова снимка</button>
         </form>
     {% endif %}
-<script>
-    const form = document.querySelector("form");
-    const loadingIndicator = document.createElement("p");
-    loadingIndicator.textContent = "⏳ Моля, изчакайте...";
-    loadingIndicator.style.fontWeight = "bold";
-    loadingIndicator.style.display = "none";
 
-    form.insertAdjacentElement("afterend", loadingIndicator);
+    <script>
+        const form = document.querySelector("form");
+        const loadingIndicator = document.createElement("p");
+        loadingIndicator.textContent = "⏳ Моля, изчакайте...";
+        loadingIndicator.style.fontWeight = "bold";
+        loadingIndicator.style.display = "none";
 
-    form.addEventListener("submit", function () {
-        loadingIndicator.style.display = "block";
-    });
-</script>
-<hr>
-<footer style="text-align: center; font-size: 0.9em; color: #555;">
+        form.insertAdjacentElement("afterend", loadingIndicator);
+
+        form.addEventListener("submit", function () {
+            loadingIndicator.style.display = "block";
+        });
+    </script>
+</main>
+<footer>
     Wine4Food AI • v0.1 • © 2025<br>
-    Създадено с ❤️ от G
+    Създадено с 🍷 от engGV
 </footer>
-
 </body>
 </html>
