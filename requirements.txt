@@ -1,0 +1,9 @@
+torch
+torchvision
+torchaudio
+timm
+flask
+pillow
+scikit-learn
+matplotlib
+huggingface_hub

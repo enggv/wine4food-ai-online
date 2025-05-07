@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wine4Food AI – Класификация на храна</title>
+</head>
+<body>
+    <h1>Качи изображение на храна</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <button type="submit">Предскажи</button>
+    </form>
+
+    {% if image_url %}
+        <h2>Качено изображение:</h2>
+        <img src="{{ image_url }}" alt="Качено изображение" width="300">
+    {% endif %}
+
+    {% if prediction %}
+        <h2>Предсказание:</h2>
+        <p style="font-size: 1.5em;">🍽 {{ prediction }}</p>
+    {% endif %}
+
+    {% if wine %}
+        <h2>Препоръчано вино:</h2>
+        <p style="font-size: 1.5em;">🍷 {{ wine }}</p>
+    {% endif %}
+
+    {% if prediction or image_url %}
+        <form method="get" action="/">
+            <button type="submit">Качи нова снимка</button>
+        </form>
+    {% endif %}
+<script>
+    const form = document.querySelector("form");
+    const loadingIndicator = document.createElement("p");
+    loadingIndicator.textContent = "⏳ Моля, изчакайте...";
+    loadingIndicator.style.fontWeight = "bold";
+    loadingIndicator.style.display = "none";
+
+    form.insertAdjacentElement("afterend", loadingIndicator);
+
+    form.addEventListener("submit", function () {
+        loadingIndicator.style.display = "block";
+    });
+</script>
+<hr>
+<footer style="text-align: center; font-size: 0.9em; color: #555;">
+    Wine4Food AI • v0.1 • © 2025<br>
+    Създадено с ❤️ от G
+</footer>
+
+</body>
+</html>
