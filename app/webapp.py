@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 from torchvision import transforms
 import timm
-from pairings import pairings  # Импортираме речника с винените съчетания
+from pairings import wine_pairings  # 🔧 Поправен импорт
 from huggingface_hub import hf_hub_download
 
 # Flask app
@@ -33,10 +33,9 @@ def predict_image(image_path, confidence_threshold=0.5):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Класовете са ключовете на речника
-    class_names = list(pairings.keys())
+    class_names = list(wine_pairings.keys())
 
     model = timm.create_model('efficientnet_b0', pretrained=False, num_classes=len(class_names))
-
     model_path = hf_hub_download(repo_id="enggv/food101-effnet-model", filename="food_model_101classes.pt")
     model.load_state_dict(torch.load(model_path, map_location=device))
 
@@ -73,12 +72,10 @@ def index():
                 except Exception as e:
                     print(f"⚠️ Неуспех при изтриване на {file_path}: {e}")
 
-            # Провери типа на файла
             if not allowed_file(file.filename):
                 prediction = "Файлът не е изображение. Моля качете .jpg, .png или .webp файл."
                 return render_template('index.html', prediction=prediction)
 
-            # Запиши и предскажи
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
 
@@ -88,7 +85,7 @@ def index():
                     prediction = "❗ Не успяхме да разпознаем храна на изображението."
                     wine = None
                 else:
-                    wine = pairings.get(prediction, "Няма налична препоръка")
+                    wine = wine_pairings.get(prediction, "Няма налична препоръка")
             except Exception as e:
                 print(f"❌ Грешка при предсказание: {e}")
                 prediction = "⚠️ Възникна неочаквана грешка при разпознаване."
