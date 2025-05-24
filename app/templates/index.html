@@ -1,37 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Wine4Food AI – Класификация на храна</title>
+    <title>SOMMELаIER — AI сомелиер за вино и храна</title>
     <style>
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #fffaf4;
+        }
+
+        header {
+            background-color: #7a1e1e;
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 1.6rem;
+            font-family: 'Georgia', serif;
+        }
+
+        header .ai {
+            color: #f6c700;
+            font-weight: bold;
         }
 
         main {
             flex: 1;
-            padding: 1em;
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #7a1e1e;
+        }
+
+        form {
+            margin-bottom: 1rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            background-color: #7a1e1e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        ul {
+            columns: 2;
+            max-width: 600px;
+            margin: 1rem auto;
         }
 
         footer {
             text-align: center;
-            padding: 1em;
-            background-color: #f1f1f1;
+            padding: 1rem;
+            background-color: #eee5de;
             font-size: 0.9em;
             color: #555;
         }
     </style>
 </head>
 <body>
+<header>
+    <strong>Wine4Food-AI</strong> – продукт на
+    <span><strong>SOMMEL<span class="ai">аI</span>ER</strong></span>
+</header>
+
 <main>
-    <h1>Качи изображение на храна</h1>
+    <h2>Качете изображение на ястие</h2>
+    <p>Нашият AI сомелиер ще разпознае храната и ще ви препоръча подходящи винени сортове за идеално съчетание.</p>
+
     <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="image">
-        <button type="submit">Предскажи</button>
+        <input type="file" name="image" required>
+        <button type="submit">Разпознаване</button>
     </form>
 
     {% if image_url %}
@@ -40,12 +88,12 @@
     {% endif %}
 
     {% if prediction %}
-        <h2>Предсказание:</h2>
+        <h2>Ястието от вашата снимка е:</h2>
         <p style="font-size: 1.5em;">🍽 {{ prediction }}</p>
     {% endif %}
 
     {% if wine %}
-        <h2>Препоръчано вино:</h2>
+        <h2>Подходящи сортове вина за вашето ястие са:</h2>
         <p style="font-size: 1.5em;">🍷 {{ wine }}</p>
     {% endif %}
 
@@ -54,6 +102,16 @@
             <button type="submit">Качи нова снимка</button>
         </form>
     {% endif %}
+
+    <section>
+        <h2>Ястия, които разпознаваме</h2>
+        <p>Нашият AI е обучен върху датасета Food-101 и най-добре разпознава следните храни:</p>
+        <ul>
+            {% for item in all_dishes|sort %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </section>
 
     <script>
         const form = document.querySelector("form");
@@ -69,9 +127,10 @@
         });
     </script>
 </main>
+
 <footer>
-    Wine4Food AI • v0.1 • © 2025<br>
-    Създадено с 🍷 от engGV
+    Wine4Food AI • v1.1 • © 2025<br>
+    Проект на екипа на SOMMELаIER — разработен с отворени технологии и страст към виното 🍷 от engGV и G
 </footer>
 </body>
 </html>

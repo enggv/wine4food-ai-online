@@ -4,23 +4,19 @@ from PIL import Image
 import torch
 from torchvision import transforms
 import timm
-from pairings import wine_pairings  # 🔧 Поправен импорт
+from pairings import wine_pairings
 from huggingface_hub import hf_hub_download
 
-# Flask app
 app = Flask(__name__, static_folder='static')
 UPLOAD_FOLDER = os.path.join(app.static_folder, 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Позволени формати
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Предикт функция
 def predict_image(image_path, confidence_threshold=0.5):
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -32,7 +28,6 @@ def predict_image(image_path, confidence_threshold=0.5):
     input_tensor = transform(image).unsqueeze(0)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Класовете са ключовете на речника
     class_names = list(wine_pairings.keys())
 
     model = timm.create_model('efficientnet_b0', pretrained=False, num_classes=len(class_names))
@@ -53,17 +48,16 @@ def predict_image(image_path, confidence_threshold=0.5):
 
     return class_names[predicted_class.item()]
 
-# Рут
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction = None
     wine = None
     image_url = None
+    all_dishes = list(wine_pairings.keys())  # 🔑 За визуализация в index.html
 
     if request.method == 'POST':
         file = request.files['image']
         if file:
-            # Изтрий предишни файлове
             for existing_file in os.listdir(app.config['UPLOAD_FOLDER']):
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], existing_file)
                 try:
@@ -74,7 +68,7 @@ def index():
 
             if not allowed_file(file.filename):
                 prediction = "Файлът не е изображение. Моля качете .jpg, .png или .webp файл."
-                return render_template('index.html', prediction=prediction)
+                return render_template('index.html', prediction=prediction, all_dishes=all_dishes)
 
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
@@ -87,15 +81,14 @@ def index():
                 else:
                     wine = wine_pairings.get(prediction, "Няма налична препоръка")
             except Exception as e:
-                print(f"❌ Грешка при предсказание: {e}")
+                print(f"❌ Грешка при разпознаване: {e}")
                 prediction = "⚠️ Възникна неочаквана грешка при разпознаване."
                 wine = None
 
             image_url = url_for('static', filename='uploads/' + file.filename)
             print(f"🖼️ Път към изображението: {image_url}")
 
-    return render_template('index.html', prediction=prediction, image_url=image_url, wine=wine)
+    return render_template('index.html', prediction=prediction, image_url=image_url, wine=wine, all_dishes=all_dishes)
 
-# Точка за стартиране
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
